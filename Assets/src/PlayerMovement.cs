@@ -4,33 +4,41 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    Rigidbody rb;
+    [SerializeField] float movementSpeed;
+    [SerializeField] float jumpForce;
+
+    [SerializeField] Transform groundCheck;
+    [SerializeField] LayerMask ground;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space")) { // press only
-            GetComponent<Rigidbody>().velocity = new Vector3(0, 5, 0);
+
+        float horizontalInput = Input.GetAxis("Horizontal"); // x-axis
+        float verticalInput = Input.GetAxis("Vertical"); // z-axis
+
+        rb.velocity = new Vector3(horizontalInput*movementSpeed, rb.velocity.y, verticalInput*movementSpeed);
+
+        if (Input.GetButtonDown("Jump") && IsGrounded()) { //press only, button refers to input buttons in unity input manager
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
         }
 
-        if (Input.GetKey("up")) { // press and hold
-            GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 5);
-        }
+        // if (Input.GetKeyDown("space")) { // press only
+        //     rb.velocity = new Vector3(rb.velocity.x, 5, 0);
+        // }
+        
+    }
 
-        if (Input.GetKey("right")) { // press and hold
-            GetComponent<Rigidbody>().velocity = new Vector3(5, 0, 0);
-        }
-
-        if (Input.GetKey("down")) { // press and hold
-            GetComponent<Rigidbody>().velocity = new Vector3(0, 0, -5);
-        }
-
-        if (Input.GetKey("left")) { // press and hold
-            GetComponent<Rigidbody>().velocity = new Vector3(-5, 0, 0);
-        }
+    bool IsGrounded()
+    {
+        return Physics.CheckSphere(groundCheck.position, 0.1f, ground);
     }
 }
