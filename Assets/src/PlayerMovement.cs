@@ -28,13 +28,24 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector3(horizontalInput*movementSpeed, rb.velocity.y, verticalInput*movementSpeed);
 
         if (Input.GetButtonDown("Jump") && IsGrounded()) { //press only, button refers to input buttons in unity input manager
-            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+            Jump();
         }
 
         // if (Input.GetKeyDown("space")) { // press only
         //     rb.velocity = new Vector3(rb.velocity.x, 5, 0);
         // }
         
+    }
+
+    void Jump() {
+        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.CompareTag("Enemy Head")) {
+            Destroy(collision.transform.parent.gameObject);
+            Jump();
+        }
     }
 
     bool IsGrounded()
